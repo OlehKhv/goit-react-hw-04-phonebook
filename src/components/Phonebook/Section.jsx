@@ -10,7 +10,8 @@ const INITIAL_STATE = {
     contacts: [],
     filter: '',
 };
-export const Section = () => {
+
+export const Section = ({ title }) => {
     const [contacts, setContacts] = useState(
         JSON.parse(localStorage.getItem('contacts')) ?? INITIAL_STATE.contacts
     );
@@ -21,25 +22,22 @@ export const Section = () => {
     }, [contacts]);
 
     const handleAddContact = contact => {
-        if (this.state.contacts.some(({ name }) => name === contact.name)) {
+        if (contacts.some(({ name }) => name === contact.name)) {
             alert(`${contact.name} is already in contacts!`);
             return;
         }
 
-        this.setState(prev => ({
-            ...prev,
-            contacts: [{ id: nanoid(), ...contact }, ...prev.contacts],
-        }));
+        setContacts(prev => [{ id: nanoid(), ...contact }, ...prev]);
     };
 
     const handleDeleteContact = id => {
-        this.setState(prev => ({
+        setContacts(prev => ({
             contacts: [...prev.contacts].filter(contact => contact.id !== id),
         }));
     };
 
     const handleFilterContacts = ({ target: { value } }) => {
-        this.setState({ filter: value });
+        setFilter({ filter: value });
     };
 
     const getFilteredContacts = () => {
@@ -56,13 +54,13 @@ export const Section = () => {
 
     return (
         <section>
-            <MainTitle>{this.props.title}</MainTitle>
-            <Form handleAddContact={this.handleAddContact} />
-            <Filter handleFilterContacts={this.handleFilterContacts} />
+            <MainTitle>{title}</MainTitle>
+            <Form handleAddContact={handleAddContact} />
+            <Filter handleFilterContacts={handleFilterContacts} />
             <Contacts
-                contacts={this.getFilteredContacts()}
-                handleDeleteContact={this.handleDeleteContact}
-                handleDeleteAllContacts={this.handleDeleteAllContacts}
+                contacts={getFilteredContacts()}
+                handleDeleteContact={handleDeleteContact}
+                handleDeleteAllContacts={handleDeleteAllContacts}
             />
         </section>
     );
@@ -70,7 +68,8 @@ export const Section = () => {
 
 // export class Section extends Component {
 //     state = {
-//         ...INITIAL_STATE,
+//          contacts: [],
+//          filter: '',
 //     };
 
 //     componentDidMount() {
