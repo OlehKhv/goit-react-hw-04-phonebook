@@ -13,7 +13,9 @@ const INITIAL_STATE = {
 
 export const Section = ({ title }) => {
     const [contacts, setContacts] = useState(
-        JSON.parse(localStorage.getItem('contacts')) ?? INITIAL_STATE.contacts
+        () =>
+            JSON.parse(localStorage.getItem('contacts')) ??
+            INITIAL_STATE.contacts
     );
     const [filter, setFilter] = useState(INITIAL_STATE.filter);
 
@@ -31,25 +33,25 @@ export const Section = ({ title }) => {
     };
 
     const handleDeleteContact = id => {
-        setContacts(prev => ({
-            contacts: [...prev.contacts].filter(contact => contact.id !== id),
-        }));
+        setContacts(prev => {
+            console.log([...prev].filter(contact => contact.id !== id));
+            return [...prev].filter(contact => contact.id !== id);
+        });
     };
 
     const handleFilterContacts = ({ target: { value } }) => {
-        setFilter({ filter: value });
+        setFilter(value);
     };
 
     const getFilteredContacts = () => {
-        const { contacts, filter } = this.state;
-
         return contacts.filter(({ name }) =>
             name.toLowerCase().includes(filter.toLowerCase())
         );
     };
 
     const handleDeleteAllContacts = () => {
-        this.setState({ ...INITIAL_STATE });
+        setContacts(INITIAL_STATE.contacts);
+        setFilter(INITIAL_STATE.filter);
     };
 
     return (
@@ -65,74 +67,6 @@ export const Section = ({ title }) => {
         </section>
     );
 };
-
-// export class Section extends Component {
-//     state = {
-//          contacts: [],
-//          filter: '',
-//     };
-
-//     componentDidMount() {
-//         if (localStorage.getItem('contacts')) {
-//             this.setState({
-//                 contacts: JSON.parse(localStorage.getItem('contacts')),
-//             });
-//         }
-//     }
-
-//     componentDidUpdate() {
-//         localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-//     }
-
-//     handleAddContact = contact => {
-//         if (this.state.contacts.some(({ name }) => name === contact.name)) {
-//             alert(`${contact.name} is already in contacts!`);
-//             return;
-//         }
-
-//         this.setState(prev => ({
-//             ...prev,
-//             contacts: [{ id: nanoid(), ...contact }, ...prev.contacts],
-//         }));
-//     };
-
-//     handleDeleteContact = id => {
-//         this.setState(prev => ({
-//             contacts: [...prev.contacts].filter(contact => contact.id !== id),
-//         }));
-//     };
-
-//     handleFilterContacts = ({ target: { value } }) => {
-//         this.setState({ filter: value });
-//     };
-
-//     getFilteredContacts = () => {
-//         const { contacts, filter } = this.state;
-
-//         return contacts.filter(({ name }) =>
-//             name.toLowerCase().includes(filter.toLowerCase())
-//         );
-//     };
-
-//     handleDeleteAllContacts = () => {
-//         this.setState({ ...INITIAL_STATE });
-//     };
-
-//     render() {
-//         return (
-//             <section>
-//                 <MainTitle>{this.props.title}</MainTitle>
-//                 <Form handleAddContact={this.handleAddContact} />
-//                 <Filter handleFilterContacts={this.handleFilterContacts} />
-//                 <Contacts
-//                     contacts={this.getFilteredContacts()}
-//                     handleDeleteContact={this.handleDeleteContact}
-//                     handleDeleteAllContacts={this.handleDeleteAllContacts}
-//                 />
-//             </section>
-//         );
-//     }
-// }
 
 Section.propTypes = { title: PropTypes.string.isRequired };
 
